@@ -2,6 +2,7 @@ package testdb
 
 import (
 	"database/sql"
+	"os"
 
 	"github.com/dolthub/go-mysql-server/driver"
 	"github.com/dolthub/go-mysql-server/memory"
@@ -31,6 +32,15 @@ func New(dbName string) *sql.DB {
 	db := Must1(sql.Open("sqle", dbName))
 	Must1(db.Exec("USE " + dbName))
 	return db
+}
+
+type Execer interface {
+	Exec(query string, args ...any) (sql.Result, error)
+}
+
+func ApplySQLFile(db Execer, file string) {
+	s := string(Must1(os.ReadFile(file)))
+	Must1(db.Exec(s))
 }
 
 func Must(err error) {

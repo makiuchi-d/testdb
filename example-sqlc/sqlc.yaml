@@ -1,0 +1,8 @@
+version: "2"
+sql:
+- engine: "mysql"
+  schema: "../testdata/00_schema.sql"
+  queries: "./query.sql"
+  gen:
+    go:
+      out: "sqlc"

@@ -1,13 +1,20 @@
-module github.com/makiuchi-d/testdb
+module github.com/makiuchi-d/testdb/example-sqlx
 
-go 1.21
+go 1.21.0
 
-require github.com/dolthub/go-mysql-server v0.16.1-0.20230801211701-7b82507a9c4f
+replace github.com/makiuchi-d/testdb => ../
+
+require (
+	github.com/go-sql-driver/mysql v1.7.1
+	github.com/jmoiron/sqlx v1.3.5
+	github.com/makiuchi-d/testdb v0.0.0-00010101000000-000000000000
+)
 
 require (
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/dolthub/flatbuffers/v23 v23.3.3-dh.2 // indirect
 	github.com/dolthub/go-icu-regex v0.0.0-20230524105445-af7e7991c97e // indirect
+	github.com/dolthub/go-mysql-server v0.16.1-0.20230801211701-7b82507a9c4f // indirect
 	github.com/dolthub/jsonpath v0.0.2-0.20230525180605-8dc13778fd72 // indirect
 	github.com/dolthub/vitess v0.0.0-20230731191047-ed28e2dc318e // indirect
 	github.com/go-kit/kit v0.12.0 // indirect

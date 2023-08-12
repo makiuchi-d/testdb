@@ -34,11 +34,7 @@ func New(dbName string) *sql.DB {
 	return db
 }
 
-type Execer interface {
-	Exec(query string, args ...any) (sql.Result, error)
-}
-
-func ApplySQLFile(db Execer, file string) {
+func ApplySQLFile(db *sql.DB, file string) {
 	s := string(Must1(os.ReadFile(file)))
 	Must1(db.Exec(s))
 }

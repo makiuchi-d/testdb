@@ -24,7 +24,7 @@ const (
 		PRIMARY KEY (id)
 	) Engine=InnoDB`
 	sqlInsert = `INSERT INTO people (id, name) VALUES (?, ?)`
-	sqlSelect = `SELECT id, name FROM people WHERE id = ?`
+	sqlSelect = `SELECT id, name FROM people WHERE id <= ?`
 )
 
 func main() {
@@ -41,10 +41,10 @@ func main() {
 	)
 	rows, _ := db.Query(sqlSelect, 2)
 	defer rows.Close()
-	rows.Next()
-	rows.Scan(&id, &name)
-
-	fmt.Println(id, name)
+	for rows.Next() {
+		rows.Scan(&id, &name)
+		fmt.Println(id, name)
+	}
 }
 ```
 

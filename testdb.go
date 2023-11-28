@@ -7,29 +7,20 @@ import (
 	"github.com/dolthub/go-mysql-server/driver"
 	"github.com/dolthub/go-mysql-server/memory"
 	sqle "github.com/dolthub/go-mysql-server/sql"
-	"github.com/dolthub/go-mysql-server/sql/information_schema"
 )
 
-type factory struct{}
+type dbs []sqle.Database
 
-func (factory) Resolve(name string, options *driver.Options) (string, sqle.DatabaseProvider, error) {
-	memdb := memory.NewDatabase(name)
-	memdb.EnablePrimaryKeyIndexes()
-
-	provider := memory.NewDBProvider(
-		memdb,
-		information_schema.NewInformationSchemaDatabase(),
-	)
-
-	return name, provider, nil
-}
-
-func init() {
-	sql.Register("sqle", driver.New(factory{}, nil))
+func (d dbs) Resolve(name string, options *driver.Options) (string, sqle.DatabaseProvider, error) {
+	return name, memory.NewDBProvider(d...), nil
 }
 
 func New(dbName string) *sql.DB {
-	db := Must1(sql.Open("sqle", dbName))
+	memdb := memory.NewDatabase(dbName)
+	memdb.EnablePrimaryKeyIndexes()
+	drv := driver.New(dbs{memdb}, nil)
+	conn := Must1(drv.OpenConnector(dbName))
+	db := sql.OpenDB(conn)
 	Must1(db.Exec("USE " + dbName))
 	return db
 }

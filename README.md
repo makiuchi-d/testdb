@@ -45,6 +45,9 @@ func main() {
 		rows.Scan(&id, &name)
 		fmt.Println(id, name)
 	}
+	// output:
+	// 1 Alice
+	// 2 Bob
 }
 ```
 

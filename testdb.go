@@ -2,7 +2,6 @@ package testdb
 
 import (
 	"database/sql"
-	"os"
 	"strings"
 
 	"github.com/dolthub/go-mysql-server/driver"
@@ -12,29 +11,26 @@ import (
 
 type dbs []sqle.Database
 
+var _ driver.Provider = dbs{}
+
 func (d dbs) Resolve(name string, options *driver.Options) (string, sqle.DatabaseProvider, error) {
 	return name, memory.NewDBProvider(d...), nil
 }
 
 func New(dbNames ...string) *sql.DB {
-	var dbs dbs
+	var memdbs dbs
 	for _, dbName := range dbNames {
 		memdb := memory.NewDatabase(dbName)
 		memdb.EnablePrimaryKeyIndexes()
-		dbs = append(dbs, memdb)
+		memdbs = append(memdbs, memdb)
 	}
-	drv := driver.New(dbs, nil)
+	drv := driver.New(memdbs, nil)
 	conn := Must1(drv.OpenConnector(strings.Join(dbNames, ";")))
 	db := sql.OpenDB(conn)
 	if len(dbNames) > 0 {
 		Must1(db.Exec("USE " + dbNames[0]))
 	}
 	return db
-}
-
-func ApplySQLFile(db *sql.DB, file string) {
-	s := string(Must1(os.ReadFile(file)))
-	Must1(db.Exec(s))
 }
 
 func Must(err error) {

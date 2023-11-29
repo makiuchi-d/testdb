@@ -1,6 +1,7 @@
 package main_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/jmoiron/sqlx"
@@ -18,7 +19,8 @@ var testdata = map[string]uint{
 func newTestDB(dbname string) *sqlx.DB {
 	db := testdb.New(dbname)
 
-	testdb.ApplySQLFile(db, "../testdata/00_schema.sql")
+	testdb.Must1(db.Exec(
+		string(testdb.Must1(os.ReadFile("../testdata/00_schema.sql")))))
 
 	for name, age := range testdata {
 		testdb.Must1(db.Exec("INSERT INTO players (name, age) VALUES (?, ?)", name, age))

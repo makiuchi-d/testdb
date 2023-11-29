@@ -3,6 +3,7 @@ package main_test
 import (
 	"context"
 	"math"
+	"os"
 	"testing"
 
 	"github.com/makiuchi-d/testdb"
@@ -19,7 +20,8 @@ var testdata = map[string]uint32{
 func newTestQuery(dbname string) *sqlc.Queries {
 	db := testdb.New(dbname)
 
-	testdb.ApplySQLFile(db, "../testdata/00_schema.sql")
+	testdb.Must1(db.Exec(
+		string(testdb.Must1(os.ReadFile("../testdata/00_schema.sql")))))
 
 	for name, age := range testdata {
 		testdb.Must1(db.Exec("INSERT INTO players (name, age) VALUES (?, ?)", name, age))
